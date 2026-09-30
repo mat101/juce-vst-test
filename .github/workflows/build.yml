@@ -49,11 +49,16 @@ jobs:
         if: runner.os == 'macOS'
         run: brew install ninja
 
-      - name: Install Ninja (Windows)
+      # Windows uses the Visual Studio generator instead of Ninja: JUCE
+      # explicitly refuses to compile under MinGW (see juce_TargetPlatform.h),
+      # and picking Ninja here risks CMake finding a MinGW gcc on PATH instead
+      # of MSVC's cl.exe. The VS generator always targets MSVC.
+      - name: Configure CMake (Windows)
         if: runner.os == 'Windows'
-        run: choco install ninja
+        run: cmake -B build -G "Visual Studio 17 2022" -A x64
 
-      - name: Configure CMake
+      - name: Configure CMake (macOS/Linux)
+        if: runner.os != 'Windows'
         run: cmake -B build -G Ninja -DCMAKE_BUILD_TYPE=Release
 
       - name: Build
