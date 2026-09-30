@@ -1,4 +1,12 @@
 cmake_minimum_required(VERSION 3.22)
+
+# Must be set before project() to take effect: build a universal binary
+# (Apple Silicon + Intel) so the plugin runs on older Intel Macs too, since
+# GitHub's macos-latest runners are arm64 and would otherwise produce an
+# arm64-only build by default.
+set(CMAKE_OSX_ARCHITECTURES "arm64;x86_64" CACHE STRING "Build architectures for macOS" FORCE)
+set(CMAKE_OSX_DEPLOYMENT_TARGET "10.13" CACHE STRING "Minimum macOS deployment target" FORCE)
+
 project(MySynth VERSION 1.0.0)
 
 set(CMAKE_CXX_STANDARD 17)
@@ -10,7 +18,6 @@ FetchContent_Declare(
     JUCE
     GIT_REPOSITORY https://github.com/juce-framework/JUCE.git
     GIT_TAG        8.0.14
-    GIT_SHALLOW    TRUE
 )
 FetchContent_MakeAvailable(JUCE)
 
