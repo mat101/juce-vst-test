@@ -95,6 +95,20 @@ void MySynthAudioProcessorEditor::resized()
 
     area.removeFromTop (20);
 
-    // Remaining space goes to the on-screen keyboard
+    // Remaining space goes to the on-screen keyboard.
     keyboardComponent.setBounds (area);
+
+    // Scale key width to fill the available width, clamped so keys stay
+    // comfortably sized. Below minKeyWidth the component shows scroll
+    // arrows instead of shrinking further; above maxKeyWidth, instead of
+    // keys growing huge, MORE of the available range (set in the
+    // constructor) becomes visible automatically.
+    constexpr float minKeyWidth = 24.0f;
+    constexpr float maxKeyWidth = 56.0f;
+    constexpr int   referenceWhiteKeys = 14; // ~2 octaves, our "comfortable" baseline
+
+    float keyWidth = (float) area.getWidth() / (float) referenceWhiteKeys;
+    keyWidth = juce::jlimit (minKeyWidth, maxKeyWidth, keyWidth);
+    keyboardComponent.setKeyWidth (keyWidth);
 }
+
